@@ -1,0 +1,53 @@
+name: build
+
+# Runs the tests and the full build on every push. The catalogue cross-check
+# needs full_sample_dataframe.csv, which is not published, so that one test
+# skips here and runs only locally -- see tests/test_pipeline.py.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Test
+        run: pytest -q
+
+      - name: Build
+        run: python build.py
+
+      - name: Check the expected outputs exist
+        run: |
+          set -e
+          for f in build/index.html build/hyades.speck build/hyades.label \
+                   build/prot.cmap build/zdi_stars.asset build/hyades_cloud.asset; do
+            test -s "$f" || { echo "missing or empty: $f"; exit 1; }
+          done
+          count=$(ls build/textures/*.png | wc -l)
+          echo "$count textures built"
+          test "$count" -gt 0
+
+      - name: Fail if the committed build/ is stale
+        run: |
+          # build/ is committed so GitHub Pages can serve it; this check makes
+          # sure it was regenerated after the last source change.
+          git diff --exit-code --stat -- build/ \
+            || { echo "build/ is out of date -- run 'python build.py' and commit"; exit 1; }

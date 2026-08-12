@@ -1,0 +1,11 @@
+# Verified against numpy 1.23.4 / matplotlib 3.6.2 / pillow 9.3.0.
+# matplotlib >= 3.5 is required for the `matplotlib.colormaps[...]` accessor.
+numpy>=1.21
+matplotlib>=3.5
+pillow>=9.0
+
+# Optional: only needed if you keep maps as FITS rather than .dat/.npy.
+# astropy>=5.0
+
+# Development only, for `pytest -q`:
+# pytest>=7.0
