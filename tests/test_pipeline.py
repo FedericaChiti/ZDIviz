@@ -31,6 +31,13 @@ def bound():
     targets, _ = io.load_targets(TARGETS)
     matched, problems = io.match_maps(targets, io.discover_maps(MAPS))
     assert not problems, f"maps that could not be bound to a row: {problems}"
+    if not matched:
+        # The raw .dat maps are unpublished research data and stay out of the
+        # public repo (see .gitignore) -- so a checkout of the repo itself,
+        # e.g. in CI, never has any. Every test that needs a real map skips
+        # cleanly here instead of failing on missing data or, worse, silently
+        # validating nothing.
+        pytest.skip("no local ZDI maps in data/maps/ (gitignored; local-only)")
     return matched
 
 
