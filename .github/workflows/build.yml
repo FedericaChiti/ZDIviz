@@ -29,7 +29,11 @@ jobs:
           pip install pytest
 
       - name: Test
-        run: pytest -q
+        # `python -m pytest`, not bare `pytest` -- the `-m` flag is what adds
+        # the repo root to sys.path, which is what makes `from zdiviz import
+        # ...` resolve. Plain `pytest` does not add it, and fails to find the
+        # package even though it imports fine everywhere else.
+        run: python -m pytest -q
 
       - name: Build
         run: python build.py
