@@ -228,7 +228,7 @@ to is ever more than a pixel across.
 build.py                  single entry point
 make_targets.py           full catalogue -> targets.csv
 targets.csv               the 9 columns the build reads, 28 rows
-data/maps/                28 ZDI maps
+data/maps/                28 ZDI maps -- local only, gitignored
 zdiviz/
   io.py                   read maps + catalogue, resample, ICRS geometry
   texture.py              lat-lon grid -> equirectangular PNG
