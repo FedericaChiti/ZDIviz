@@ -8,5 +8,9 @@ venv/
 
 data/maps/*.dat
 
+# docs/ is deliberately NOT ignored -- it's the site GitHub Pages serves
+# (Settings > Pages > "Deploy from a branch" only offers / or /docs, hence the
+# name). Regenerate with `python build.py`; commit after rebuilding.
+
 full_sample_dataframe.csv
 

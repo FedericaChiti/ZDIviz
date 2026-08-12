@@ -49,7 +49,7 @@ jobs:
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "No raw ZDI maps in data/maps/ -- expected here (see README). Skipping the full build verification; build/ is what's actually served, and it's checked into the repo directly."
+            echo "No raw ZDI maps in data/maps/ -- expected here (see README). Skipping the full build verification; docs/ is what's actually served, and it's checked into the repo directly."
           fi
 
       - name: Build
@@ -60,18 +60,18 @@ jobs:
         if: steps.maps.outputs.found == 'true'
         run: |
           set -e
-          for f in build/index.html build/hyades.speck build/hyades.label \
-                   build/prot.cmap build/zdi_stars.asset build/hyades_cloud.asset; do
+          for f in docs/index.html docs/hyades.speck docs/hyades.label \
+                   docs/prot.cmap docs/zdi_stars.asset docs/hyades_cloud.asset; do
             test -s "$f" || { echo "missing or empty: $f"; exit 1; }
           done
-          count=$(ls build/textures/*.png | wc -l)
+          count=$(ls docs/textures/*.png | wc -l)
           echo "$count textures built"
           test "$count" -gt 0
 
-      - name: Fail if the committed build/ is stale
+      - name: Fail if the committed docs/ is stale
         if: steps.maps.outputs.found == 'true'
         run: |
-          # build/ is committed so GitHub Pages can serve it; this check makes
+          # docs/ is committed so GitHub Pages can serve it; this check makes
           # sure it was regenerated after the last source change.
-          git diff --exit-code --stat -- build/ \
-            || { echo "build/ is out of date -- run 'python build.py' and commit"; exit 1; }
+          git diff --exit-code --stat -- docs/ \
+            || { echo "docs/ is out of date -- run 'python build.py' and commit"; exit 1; }

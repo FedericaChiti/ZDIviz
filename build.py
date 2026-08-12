@@ -4,13 +4,17 @@
     python build.py
 
 Reads  : full_sample_dataframe.csv, data/maps/<star>_<year>.dat
-Writes : build/textures/*.png      equirectangular B_r textures, 2048x1024
-         build/hyades.speck        Digital Universe point catalogue, parsecs
-         build/hyades.label        labels for the point cloud
-         build/prot.cmap           colour table for the point cloud
-         build/zdi_stars.asset     one RenderableSphere per mapped star
-         build/hyades_cloud.asset  the cluster as a point cloud
-         build/index.html          browser preview (open this on macOS)
+Writes : docs/textures/*.png      equirectangular B_r textures, 2048x1024
+         docs/hyades.speck        Digital Universe point catalogue, parsecs
+         docs/hyades.label        labels for the point cloud
+         docs/prot.cmap           colour table for the point cloud
+         docs/zdi_stars.asset     one RenderableSphere per mapped star
+         docs/hyades_cloud.asset  the cluster as a point cloud
+         docs/index.html          browser preview (open this on macOS)
+
+Output goes to docs/, not build/, because that is the only folder name (other
+than the repo root) GitHub Pages' "Deploy from a branch" setting can serve --
+its folder picker offers exactly "/ (root)" or "/docs", nothing else.
 """
 
 import argparse
@@ -20,7 +24,7 @@ from pathlib import Path
 from zdiviz import io, texture, speck, assets, preview
 
 ROOT = Path(__file__).parent
-BUILD = ROOT / "build"
+BUILD = ROOT / "docs"
 
 # Texture resolution. 2048x1024 is 2:1 as an equirectangular map must be, and
 # oversamples the ~77-cell equatorial resolution of the inversion by a wide
@@ -41,9 +45,15 @@ def main():
     args = p.parse_args()
 
     # 1. Fresh output tree ------------------------------------------------
-    if args.out.exists():
-        shutil.rmtree(args.out)
-    (args.out / "textures").mkdir(parents=True)
+    # Only clean the textures/ subdirectory (the one place a stale file could
+    # linger -- e.g. a PNG for a map that's since been removed). We do NOT
+    # wipe args.out itself: when it's docs/, that folder also holds
+    # docs/preview.png, the hand-picked README screenshot, which this script
+    # neither writes nor should ever delete.
+    textures_dir = args.out / "textures"
+    if textures_dir.exists():
+        shutil.rmtree(textures_dir)
+    textures_dir.mkdir(parents=True)
 
     # 2. Target catalogue -------------------------------------------------
     targets, skipped = io.load_targets(args.targets)

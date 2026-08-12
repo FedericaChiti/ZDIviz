@@ -49,7 +49,7 @@ pip install -r requirements.txt
 python build.py
 ```
 
-Everything lands in `build/`:
+Everything lands in `docs/` (that name, not `build/`, is required — it's one of the only two folders GitHub Pages' "Deploy from a branch" option can serve):
 
 | Output | What it is |
 |---|---|
@@ -61,11 +61,11 @@ Everything lands in `build/`:
 | `hyades_cloud.asset` | the cluster as a point cloud |
 | `index.html` | the browser preview |
 
-Open `build/index.html` — over `http://`, not `file://`, since the textures are
+Open `docs/index.html` — over `http://`, not `file://`, since the textures are
 fetched:
 
 ```bash
-python -m http.server -d build 8000
+python -m http.server -d docs 8000
 ```
 
 To change the radius scaling (see below):
@@ -236,7 +236,9 @@ zdiviz/
   assets.py               -> OpenSpace .asset Lua config
   preview.py              -> standalone three.js HTML
 tests/                    pytest; run with `pytest -q`
-build/                    generated; committed so GitHub Pages can serve it
+docs/                     generated; committed so GitHub Pages can serve it
+                          (docs/preview.png is the one hand-picked exception --
+                          build.py never touches it)
 docs/preview.png          the screenshot above
 ```
 
